@@ -1,8 +1,5 @@
- - name: Build web app
-      env:
-        VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-        VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-      run: npm run build
+name: Build Android APK
+
 on:
   workflow_dispatch:
   push:
@@ -33,59 +30,10 @@ jobs:
         run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
 
       - name: Build web app
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build
-
-      - name: Add error screen
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
-
-          const file = 'dist/index.html';
-          let html = fs.readFileSync(file, 'utf8');
-
-          const diagnostic = `
-          <script>
-          (function () {
-            function showError(message) {
-              function display() {
-                var box = document.createElement('div');
-                box.style.cssText = 'position:fixed;inset:0;z-index:999999;background:#fff;color:#b00020;padding:20px;overflow:auto;font:16px sans-serif;white-space:pre-wrap;direction:ltr;text-align:left';
-                box.textContent = 'Application error:\\n\\n' + message;
-                document.body.appendChild(box);
-              }
-
-              if (document.body) {
-                display();
-              } else {
-                document.addEventListener('DOMContentLoaded', display, { once: true });
-              }
-            }
-
-            window.addEventListener('error', function (event) {
-              if (event.target && event.target.tagName === 'SCRIPT') {
-                showError('Failed to load a script: ' + event.target.src);
-              } else if (event.message) {
-                showError(event.message + (event.error && event.error.stack ? '\\n\\n' + event.error.stack : ''));
-              }
-            }, true);
-
-            window.addEventListener('unhandledrejection', function (event) {
-              var reason = event.reason;
-              showError(reason && reason.stack ? reason.stack : String(reason));
-            });
-          })();
-          </script>`;
-
-          if (!/<head(?:\s[^>]*)?>/i.test(html)) {
-            throw new Error('Could not find the head tag in dist/index.html');
-          }
-
-          html = html.replace(/<head(?:\s[^>]*)?>/i, function (match) {
-            return match + diagnostic;
-          });
-
-          fs.writeFileSync(file, html);
-          NODE
 
       - name: Create Android project
         run: |
