@@ -1,0 +1,17 @@
+{
+  "name": "מסווה — כינויי Gmail זמניים",
+  "short_name": "מסווה",
+  "description": "כינויי Gmail בסגנון +ונקודות וקריאת ההודעות שנשלחו אליהם",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0d12",
+  "theme_color": "#0b0d12",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
